@@ -23,11 +23,13 @@ router.post(
   },
   checkProjectRole(['owner', 'manager']),
   async (req, res) => {
+    console.log('📩 POST /subtasks — req.body:', req.body);
     try {
       const { taskId, title } = req.body;
       const newSubtask = await Subtask.create({ taskId, title, completed: false });
       res.json(newSubtask);
     } catch (err) {
+      console.error('❌ Ошибка создания подзадачи:', err);
       res.status(500).json({ error: 'Ошибка создания подзадачи' });
     }
   }
