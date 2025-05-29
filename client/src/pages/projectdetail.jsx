@@ -58,10 +58,12 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
     transform,
     transition
   } = useSortable({ id: task.id });
+
   const [editing, setEditing] = useState(false);
   const [tempTitle, setTempTitle] = useState(task.title);
-  const [editingSubIndex, setEditingSubIndex] = useState(null);
+  const [editingSubId, setEditingSubId] = useState(null);
   const [subtaskTempTitle, setSubtaskTempTitle] = useState('');
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -78,10 +80,10 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
     }
   };
 
-  const handleSubtaskRename = (index) => {
+  const handleSubtaskRename = (subtaskId) => {
     if (subtaskTempTitle.trim() !== '') {
-      onRenameSubtask(task.id, index, subtaskTempTitle);
-      setEditingSubIndex(null);
+      onRenameSubtask(subtaskId, subtaskTempTitle);
+      setEditingSubId(null);
       setSubtaskTempTitle('');
     }
   };
@@ -120,45 +122,46 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
         )}
 
         <ul className="subtasks-list">
-          {task.subtasks?.map((subtask, index) => (
+          {task.subtasks?.map((subtask) => (
             <li
-              key={index}
+              key={subtask.id}
               className={`subtask-item ${subtask.completed ? 'completed' : ''}`}
-              data-index={index}
+              data-id={subtask.id}
             >
               <span
                 className={`checkbox ${subtask.completed ? 'checked' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onToggleSubtask(task.id, index);
+                  onToggleSubtask(task.id, task.subtasks.indexOf(subtask));
                 }}
               >
                 {subtask.completed ? '✓' : ''}
               </span>
-              {editingSubIndex === index ? (
+
+              {editingSubId === subtask.id ? (
                 <input
                   type="text"
                   value={subtaskTempTitle || subtask.title}
                   onChange={(e) => setSubtaskTempTitle(e.target.value)}
-                  onBlur={() => handleSubtaskRename(index)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSubtaskRename(index)}
+                  onBlur={() => handleSubtaskRename(subtask.id)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubtaskRename(subtask.id)}
                   autoFocus
                 />
               ) : (
                 <span
-  className="subtask-title"
-  onClick={() => {
-    setEditingSubIndex(index);
-    setSubtaskTempTitle(subtask.title);
-  }}
->
-  {subtask.title}
-  {subtask.comment && (
-    <div className="subtask-tooltip">
-      {subtask.comment}
-    </div>
-  )}
-</span>
+                  className="subtask-title"
+                  onClick={() => {
+                    setEditingSubId(subtask.id);
+                    setSubtaskTempTitle(subtask.title);
+                  }}
+                >
+                  {subtask.title}
+                  {subtask.comment && (
+                    <div className="subtask-tooltip">
+                      {subtask.comment}
+                    </div>
+                  )}
+                </span>
               )}
             </li>
           ))}
@@ -291,6 +294,8 @@ setProjectTitle(res.data.title);
 
 
   const handleRenameSubtask = async (taskId, subtaskIndex, newTitle) => {
+    console.log('RENAME → subtaskId:', subtask?.id, '| title:', newTitle, '| completed:', subtask?.completed);
+
   try {
     // Находим подзадачу внутри нужной задачи
     const task = tasks.find(t => t.id === taskId);
