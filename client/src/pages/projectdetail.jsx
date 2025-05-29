@@ -297,65 +297,22 @@ useEffect(() => {
 
 
 
-const handleRenameSubtask = async (subtaskId, newTitle) => {
-  try {
-    let foundSubtask = null;
 
-    for (const task of tasks) {
-      const sub = task.subtasks.find(st => st.id === subtaskId);
-      if (sub) {
-        foundSubtask = sub;
-        break;
-      }
+
+  const handleToggleSubtask = async (taskId, subtaskIndex) => {
+    try {
+      const subtask = tasks.find(t => t.id === taskId).subtasks[subtaskIndex];
+      console.log('PUT:', subtask.id, typeof subtask.id);;
+      await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtask.id}`, {
+        completed: !subtask.completed
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchTasks();
+    } catch (err) {
+      console.error("Ошибка при переключении статуса подзадачи:", err);
     }
-
-    if (!foundSubtask) {
-      throw new Error('Подзадача не найдена');
-    }
-
-    await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
-      title: newTitle,
-      completed: foundSubtask.completed ?? false
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    fetchTasks();
-  } catch (err) {
-    console.error("Ошибка при переименовании подзадачи:", err);
-  }
-};
-
-  const handleRenameSubtask = async (subtaskId, newTitle) => {
-  try {
-    let foundSubtask = null;
-
-    for (const task of tasks) {
-      const sub = task.subtasks.find(st => st.id === subtaskId);
-      if (sub) {
-        foundSubtask = sub;
-        break;
-      }
-    }
-
-    if (!foundSubtask) {
-      throw new Error('Подзадача не найдена');
-    }
-
-    console.log('🛠 PUT /subtasks/', subtaskId);
-
-    await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
-      title: newTitle,
-      completed: foundSubtask.completed ?? false
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    fetchTasks();
-  } catch (err) {
-    console.error("Ошибка при переименовании подзадачи:", err);
-  }
-};
+  };
 
 const handleContextMenu = (e) => {
   if (userRole === 'member') return; // 🔒 блокируем для участника
