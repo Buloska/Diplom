@@ -437,6 +437,21 @@ const handleContextMenu = (e) => {
 
   const handleCloseContextMenu = () => setContextMenu(null);
 
+  const handleAddSubtask = async (taskId) => {
+  try {
+    await axios.post(`${process.env.REACT_APP_API_URL}/subtasks`, {
+      taskId,
+      title: 'Новая подзадача',
+      completed: false
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchTasks();
+  } catch (err) {
+    console.error("Ошибка при добавлении подзадачи:", err);
+  }
+};
+
   const handleDragEnd = (event) => {
     const { active, delta } = event;
     setTasks((prev) => {
