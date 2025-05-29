@@ -26,12 +26,13 @@ const AuthPage = () => {
 
       const response = await axios.post(url, payload);
       const token = response.data.token;
-      const fullName = response.data.user.fullName || formData.username;
+      const user = response.data?.user;
+      const fullName = user?.fullName || formData.username;
 
       if (token) {
         localStorage.setItem('token', token);
         localStorage.setItem('fullName', fullName);
-        localStorage.setItem('userId', String(response.data.user.id)); // ✅ сохранение userId
+        localStorage.setItem('userId', String(user.id)); // ✅ сохранение userId
         navigate('/projects');
       }
     } catch (error) {
