@@ -26,15 +26,16 @@ const AuthPage = () => {
 
       const response = await axios.post(url, payload);
       const token = response.data.token;
-      const user = response.data?.user;
-      const fullName = user?.fullName || formData.username;
+     const user = response.data?.user;
 
-      if (token) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('fullName', fullName);
-        localStorage.setItem('userId', String(user.id)); // ✅ сохранение userId
-        navigate('/projects');
-      }
+if (token && user) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('fullName', user.fullName || formData.username);
+  localStorage.setItem('userId', String(user.id));
+  navigate('/projects');
+} else {
+  alert('Неверный ответ от сервера');
+}
     } catch (error) {
       console.error(error);
       alert('Ошибка при входе или регистрации');
