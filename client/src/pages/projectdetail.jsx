@@ -125,10 +125,11 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
         <ul className="subtasks-list">
           {task.subtasks?.map((subtask) => (
             <li
-              key={subtask.id}
-              className={`subtask-item ${subtask.completed ? 'completed' : ''}`}
-              data-id={subtask.id}
-            >
+  key={subtask.id}
+  className={`subtask-item ${subtask.completed ? 'completed' : ''}`}
+  data-id={subtask.id}                      // ID подзадачи
+  data-task-id={task.id}                   // (опционально, если пригодится для меню)
+>
               <span
                 className={`checkbox ${subtask.completed ? 'checked' : ''}`}
                 onClick={(e) => {
@@ -337,34 +338,38 @@ const handleRenameSubtask = async (subtaskId, newTitle) => {
     }
   };
 
-  const handleContextMenu = (e) => {
-    if (userRole === 'member') return; // блокируем контекстное меню для участников
+const handleContextMenu = (e) => {
+  if (userRole === 'member') return; // 🔒 блокируем для участника
 
-    e.preventDefault();
-    const x = e.pageX;
-    const y = e.pageY;
-    const taskId = e.target.closest('.task-card')?.getAttribute('data-id');
-    const subtaskIndex = parseInt(e.target.closest('.subtask-item')?.getAttribute('data-index'));
+  e.preventDefault();
+  const x = e.pageX;
+  const y = e.pageY;
+  const taskId = e.target.closest('.task-card')?.getAttribute('data-id');
+  const subtaskId = e.target.closest('.subtask-item')?.getAttribute('data-id');
 
-  if (taskId && !isNaN(subtaskIndex)) {
-  const options = [];
+  if (taskId && subtaskId) {
+    const task = tasks.find(t => t.id === parseInt(taskId));
+    const subIndex = task?.subtasks?.findIndex(st => st.id === parseInt(subtaskId));
 
-  if (userRole === 'manager' || userRole === 'owner') {
-    options.push({
-      label: 'Комментарий',
-      onClick: () => {
-  setCommentTarget({ taskId, subtaskIndex });
-  setShowCommentModal(true);
-  setContextMenu(null);
-}
-    });
-  }
+    if (!task || subIndex === -1 || subIndex == null) return;
+
+    const options = [];
+
+    if (userRole === 'manager' || userRole === 'owner') {
+      options.push({
+        label: 'Комментарий',
+        onClick: () => {
+          setCommentTarget({ taskId, subtaskIndex: subIndex });
+          setShowCommentModal(true);
+          setContextMenu(null);
+        }
+      });
+    }
 
     if (userRole !== 'member') {
       options.push({
-       label: 'Удалить подзадачу',
+        label: 'Удалить подзадачу',
         onClick: async () => {
-          const subtaskId = tasks.find(t => t.id === parseInt(taskId)).subtasks[subtaskIndex].id;
           try {
             await axios.delete(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
               headers: { Authorization: `Bearer ${token}` }
@@ -380,70 +385,70 @@ const handleRenameSubtask = async (subtaskId, newTitle) => {
 
     setContextMenu({ x, y, options });
   } else if (taskId) {
-      setContextMenu({
-        x, y,
-        options: [
-          {
-            label: 'Удалить задачу',
-            onClick: async () => {
-              try {
-                await axios.delete(`${process.env.REACT_APP_API_URL}/api/tasks/${taskId}`, {
-                  headers: { Authorization: `Bearer ${token}` }
-                });
-                fetchTasks();
-                setContextMenu(null);
-              } catch (err) {
-                console.error('Ошибка при удалении задачи:', err);
-              }
-            }
-          },
-          {
-            label: 'Изменить дату окончания',
-            onClick: () => {
-              const task = tasks.find(t => t.id.toString() === taskId?.toString());
-              setEditingDueDateTask(task);
-              setShowEditDueDateModal(true);
+    setContextMenu({
+      x, y,
+      options: [
+        {
+          label: 'Удалить задачу',
+          onClick: async () => {
+            try {
+              await axios.delete(`${process.env.REACT_APP_API_URL}/api/tasks/${taskId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              fetchTasks();
               setContextMenu(null);
-            }
-          },
-          {
-            label: 'Назначить исполнителя',
-            onClick: () => {
-              setExecutorModalTaskId(taskId);
-              setContextMenu(null);
+            } catch (err) {
+              console.error('Ошибка при удалении задачи:', err);
             }
           }
-        ]
-      });
-    } else {
-      setContextMenu({
-        x, y,
-        options: [
-          {
-            label: 'Создать задачу',
-            onClick: async () => {
-              try {
-                await axios.post(`${process.env.REACT_APP_API_URL}/api/tasks`, {
-                  title: 'Новая задача',
-                  description: '',
-                  dueDate: new Date().toISOString().slice(0, 10),
-                  priority: 'средний',
-                  status: 'новая',
-                  projectId: projectId
-                }, {
-                  headers: { Authorization: `Bearer ${token}` }
-                });
-                fetchTasks();
-              } catch (err) {
-                console.error('Ошибка при создании задачи:', err);
-              }
+        },
+        {
+          label: 'Изменить дату окончания',
+          onClick: () => {
+            const task = tasks.find(t => t.id.toString() === taskId?.toString());
+            setEditingDueDateTask(task);
+            setShowEditDueDateModal(true);
+            setContextMenu(null);
+          }
+        },
+        {
+          label: 'Назначить исполнителя',
+          onClick: () => {
+            setExecutorModalTaskId(taskId);
+            setContextMenu(null);
+          }
+        }
+      ]
+    });
+  } else {
+    setContextMenu({
+      x, y,
+      options: [
+        {
+          label: 'Создать задачу',
+          onClick: async () => {
+            try {
+              await axios.post(`${process.env.REACT_APP_API_URL}/api/tasks`, {
+                title: 'Новая задача',
+                description: '',
+                dueDate: new Date().toISOString().slice(0, 10),
+                priority: 'средний',
+                status: 'новая',
+                projectId: projectId
+              }, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              fetchTasks();
+            } catch (err) {
+              console.error('Ошибка при создании задачи:', err);
             }
           }
-        ]
-        
-      });
-    }
-  };
+        }
+      ]
+    });
+  }
+};
+
 
   const handleCloseContextMenu = () => setContextMenu(null);
 
