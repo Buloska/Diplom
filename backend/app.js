@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { sequelize } = require('./config/db');
+const db = require('./config/db');
+const sequelize = db.sequelize;
 const labelRoutes = require('./routes/label');
 const projectRoutes = require('./routes/project');
 const commentRoutes = require('./routes/comment');
