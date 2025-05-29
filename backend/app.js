@@ -30,10 +30,12 @@ app.use('/subtasks', subtaskRoutes);
 
 
 
-sequelize.sync().then(() => {
-  console.log('База данных синхронизирована');
+sequelize.sync({ alter: true }).then(() => {
+  console.log('✅ База данных синхронизирована');
+
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+}).catch((err) => {
+  console.error('❌ Ошибка при синхронизации базы данных:', err);
 });
 
-sequelize.sync();
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
