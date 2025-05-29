@@ -47,10 +47,7 @@ const ContextMenu = ({ x, y, options, onClose }) => {
 };
 const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameSubtask }) => {
   // 🔒 Защита от повреждённых задач
-  if (!task || !task.id || typeof task.title !== 'string') {
-    console.warn('⛔ Пропуск задачи с некорректными данными:', task);
-    return null;
-  }
+  
   const {
     attributes,
     listeners,
@@ -64,6 +61,10 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
   const [editingSubId, setEditingSubId] = useState(null);
   const [subtaskTempTitle, setSubtaskTempTitle] = useState('');
 
+  if (!task || !task.id || typeof task.title !== 'string') {
+    console.warn('⛔ Пропуск задачи с некорректными данными:', task);
+    return null;
+  }
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
