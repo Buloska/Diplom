@@ -294,23 +294,25 @@ setProjectTitle(res.data.title);
 
 
 
-  const handleRenameSubtask = async (taskId, subtaskIndex, newTitle) => {
-
+const handleRenameSubtask = async (subtaskId, newTitle) => {
   try {
-    // Находим подзадачу внутри нужной задачи
-    const task = tasks.find(t => t.id === taskId);
-    const subtask = task?.subtasks?.[subtaskIndex];
+    let foundSubtask = null;
 
-    if (!subtask) {
+    for (const task of tasks) {
+      const sub = task.subtasks.find(st => st.id === subtaskId);
+      if (sub) {
+        foundSubtask = sub;
+        break;
+      }
+    }
+
+    if (!foundSubtask) {
       throw new Error('Подзадача не найдена');
     }
-        console.log('RENAME → subtaskId:', subtask?.id, '| title:', newTitle, '| completed:', subtask?.completed);
-
-    const subtaskId = subtask.id;
 
     await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
       title: newTitle,
-      completed: subtask.completed ?? false // ← обязательно
+      completed: foundSubtask.completed ?? false
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });
