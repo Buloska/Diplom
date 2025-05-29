@@ -255,6 +255,7 @@ setProjectTitle(res.data.title);
   }, [fetchTasks, fetchRole, fetchProject]);
 
   const handleAddSubtask = async (taskId) => {
+    console.log('Добавление подзадачи к задаче ID:', taskId);
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/subtasks`, {
         taskId,
