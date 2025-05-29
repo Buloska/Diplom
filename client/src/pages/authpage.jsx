@@ -25,6 +25,7 @@ const AuthPage = () => {
           };
 
       const response = await axios.post(url, payload);
+      console.log('📦 response.data:', response.data);
       const token = response.data.token;
      const user = response.data?.user;
 
