@@ -34,7 +34,7 @@ const handleLogout = () => {
 };
   const fetchProjects = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/projects', {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProjects(res.data);
@@ -46,7 +46,7 @@ const handleLogout = () => {
   const handleDeleteProject = async (projectId) => {
   if (!window.confirm('Удалить проект?')) return;
   try {
-    await axios.delete(`http://localhost:5000/api/projects/${projectId}`, {
+    await axios.delete(`${process.env.REACT_APP_API_URL}/api/projects/${projectId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     fetchProjects(); // обновить список

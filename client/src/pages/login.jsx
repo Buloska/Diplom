@@ -9,7 +9,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -23,17 +23,11 @@ const LoginPage = () => {
       console.log('user из ответа:', data.user);
       console.log('user.id:', data.user?.id);
 
-      console.log('data:', data);
       if (res.ok) {
-        console.log('Ответ от сервера:', data);
-        console.log('ID пользователя:', data.user?.id);
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('userId', data.user.id);
-        console.log('userId до записи:', data.user.id);
-        console.log('data.user.id =', data.user?.id);
-localStorage.setItem('userId', String(data.user.id));
-console.log('userId в localStorage:', localStorage.getItem('userId'));
+        localStorage.setItem('userId', String(data.user.id));
+        console.log('userId в localStorage:', localStorage.getItem('userId'));
         navigate('/projects');
       } else {
         alert(data.message || 'Ошибка входа');

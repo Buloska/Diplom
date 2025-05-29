@@ -190,7 +190,7 @@ const ProjectDetail = () => {
   
   const fetchProject = useCallback(async () => {
   try {
-    const res = await axios.get(`http://localhost:5000/api/projects/${projectId}`, {
+    await axios.get(`${process.env.REACT_APP_API_URL}/api/projects/${projectId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
      console.log('Полученный проект:', res.data);
@@ -202,11 +202,11 @@ const ProjectDetail = () => {
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/tasks/project/${projectId}`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/tasks/project/${projectId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const tasksWithSubtasks = await Promise.all(res.data.map(async (t) => {
-        const subtasksRes = await axios.get(`http://localhost:5000/subtasks/task/${t.id}`, {
+        const subtasksRes = await axios.get(`${process.env.REACT_APP_API_URL}/subtasks/task/${t.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         return { ...t, subtasks: subtasksRes.data };
@@ -222,7 +222,7 @@ const ProjectDetail = () => {
 
   const fetchRole = useCallback(async () => {
   try {
-    const res = await axios.get(`http://localhost:5000/api/projects/${projectId}/members`, {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/projects/${projectId}/members`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -256,7 +256,7 @@ const ProjectDetail = () => {
 
   const handleAddSubtask = async (taskId) => {
     try {
-      await axios.post('http://localhost:5000/subtasks', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/subtasks`, {
         taskId,
         title: 'Новая подзадача',
         completed: false
@@ -271,7 +271,7 @@ const ProjectDetail = () => {
 
   const handleRenameTask = async (taskId, newTitle) => {
   try {
-    await axios.put(`http://localhost:5000/api/tasks/${taskId}`, {
+    await axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${taskId}`, {
       title: newTitle
     }, {
       headers: { Authorization: `Bearer ${token}` }
@@ -296,7 +296,7 @@ const ProjectDetail = () => {
 
     const subtaskId = subtask.id;
 
-    await axios.put(`http://localhost:5000/subtasks/${subtaskId}`, {
+    await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
       title: newTitle,
       completed: subtask.completed ?? false // ← обязательно
     }, {
@@ -312,7 +312,7 @@ const ProjectDetail = () => {
   const handleToggleSubtask = async (taskId, subtaskIndex) => {
     try {
       const subtask = tasks.find(t => t.id === taskId).subtasks[subtaskIndex];
-      await axios.put(`http://localhost:5000/subtasks/${subtask.id}`, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtask.id}`, {
         completed: !subtask.completed
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -352,7 +352,7 @@ const ProjectDetail = () => {
         onClick: async () => {
           const subtaskId = tasks.find(t => t.id === parseInt(taskId)).subtasks[subtaskIndex].id;
           try {
-            await axios.delete(`http://localhost:5000/subtasks/${subtaskId}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
               headers: { Authorization: `Bearer ${token}` }
             });
             fetchTasks();
@@ -373,7 +373,7 @@ const ProjectDetail = () => {
             label: 'Удалить задачу',
             onClick: async () => {
               try {
-                await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, {
+                await axios.delete(`${process.env.REACT_APP_API_URL}/api/tasks/${taskId}`, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 fetchTasks();
@@ -409,7 +409,7 @@ const ProjectDetail = () => {
             label: 'Создать задачу',
             onClick: async () => {
               try {
-                await axios.post('http://localhost:5000/api/tasks', {
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/tasks`, {
                   title: 'Новая задача',
                   description: '',
                   dueDate: new Date().toISOString().slice(0, 10),
@@ -476,7 +476,7 @@ const ProjectDetail = () => {
         .subtasks[commentTarget.subtaskIndex].id;
 
       try {
-        await axios.put(`http://localhost:5000/subtasks/${subtaskId}/comment`, {
+        await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}/comment`, {
           comment: newComment
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -524,7 +524,7 @@ const ProjectDetail = () => {
           }}
           onSave={async (newDate) => {
             try {
-              await axios.put(`http://localhost:5000/api/tasks/${editingDueDateTask.id}`, {
+              await axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${editingDueDateTask.id}`, {
                 dueDate: newDate
               }, {
                 headers: { Authorization: `Bearer ${token}` }

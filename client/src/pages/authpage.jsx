@@ -4,14 +4,14 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
-    
   const navigate = useNavigate();
 
   const handleSubmit = async (formData, isLogin) => {
     try {
+      const baseUrl = process.env.REACT_APP_API_URL;
       const url = isLogin
-        ? 'http://localhost:5000/api/auth/login'
-        : 'http://localhost:5000/api/auth/register';
+        ? `${baseUrl}/api/auth/login`
+        : `${baseUrl}/api/auth/register`;
 
       const payload = isLogin
         ? {
@@ -26,13 +26,13 @@ const AuthPage = () => {
 
       const response = await axios.post(url, payload);
       const token = response.data.token;
-      const fullName = response.data.user.fullName || formData.username; // fallback если backend не вернёт
+      const fullName = response.data.user.fullName || formData.username;
 
       if (token) {
-         localStorage.setItem('token', token);
-          localStorage.setItem('fullName', fullName);
-  localStorage.setItem('userId', String(response.data.user.id)); // ✅ вот это добавь
-  navigate('/projects');
+        localStorage.setItem('token', token);
+        localStorage.setItem('fullName', fullName);
+        localStorage.setItem('userId', String(response.data.user.id)); // ✅ сохранение userId
+        navigate('/projects');
       }
     } catch (error) {
       console.error(error);
