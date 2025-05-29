@@ -5,17 +5,33 @@ const checkProjectRole = require('../middleware/checkProjectRole');
 const { Subtask, Task } = require('../config/db');
 
 // POST /subtasks — создание
-router.post('/', authMiddleware, checkProjectRole(['owner', 'manager']), async (req, res) => {
-  console.log('===> body:', req.body);
-  try {
-    const { taskId, title } = req.body;
-    const newSubtask = await Subtask.create({ taskId, title, completed: false });
-    res.json(newSubtask);
-  } catch (err) {
-    res.status(500).json({ error: 'Ошибка создания подзадачи' });
+router.post(
+  '/',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { taskId } = req.body;
+      const task = await Task.findByPk(taskId);
+      if (!task) return res.status(404).json({ message: 'Задача не найдена' });
+
+      req.body.projectId = task.projectId; // 💡 для checkProjectRole
+      next();
+    } catch (err) {
+      console.error('Ошибка при получении projectId из задачи:', err);
+      res.status(500).json({ message: 'Ошибка при проверке projectId' });
+    }
+  },
+  checkProjectRole(['owner', 'manager']),
+  async (req, res) => {
+    try {
+      const { taskId, title } = req.body;
+      const newSubtask = await Subtask.create({ taskId, title, completed: false });
+      res.json(newSubtask);
+    } catch (err) {
+      res.status(500).json({ error: 'Ошибка создания подзадачи' });
+    }
   }
-});
-console.log('===> Subtask routes подключены');
+);
 
 // PUT /subtasks/:id — обновление
 router.put(
