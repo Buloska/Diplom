@@ -6,11 +6,12 @@ const ProjectForm = ({ onClose, onCreated }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const token = localStorage.getItem('token');
-
+  const API_URL = process.env.REACT_APP_API_URL;
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/projects', {
+      await axios.post(`${API_URL}/api/projects`, {
         name,
         description
       }, {

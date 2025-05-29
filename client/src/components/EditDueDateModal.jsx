@@ -3,10 +3,11 @@ import './EditDueDateModal.css';
 
 const EditDueDateModal = ({ task, onClose, onSave }) => {
   const [selectedDate, setSelectedDate] = useState(task?.dueDate?.slice(0, 10) || '');
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSave = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${task.id}`, {
+      const res = await fetch(`${API_URL}/api/tasks/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

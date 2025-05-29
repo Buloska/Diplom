@@ -9,6 +9,7 @@ const TaskForm = ({ onSuccess, onCancel, initialDueDate = '' }) => {
   const [priority, setPriority] = useState('средний');
   const [status, setStatus] = useState('новая');
   const [loading, setLoading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const token = localStorage.getItem('token');
 
@@ -29,8 +30,7 @@ const TaskForm = ({ onSuccess, onCancel, initialDueDate = '' }) => {
 
     try {
       console.log('📦 payload:', JSON.stringify(payload));
-      await axios.post(
-        'http://localhost:5000/api/tasks',
+      await axios.post(`${API_URL}/api/tasks`,
         payload,
         {
           headers: {

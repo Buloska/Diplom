@@ -8,6 +8,7 @@ const CalendarView = ({ tasks = [], onDayClick, onRightClick, onTaskDeleted }) =
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [contextMenuDay, setContextMenuDay] = useState(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const startDay = new Date(currentYear, currentMonth, 1).getDay();
@@ -103,7 +104,7 @@ const CalendarView = ({ tasks = [], onDayClick, onRightClick, onTaskDeleted }) =
                     <button
                       onClick={async () => {
                         try {
-                          await axios.delete(`http://localhost:5000/api/tasks/${task.id}`, {
+                          await axios.delete(`${API_URL}/api/tasks/${task.id}`, {
                             headers: {
                               Authorization: `Bearer ${localStorage.getItem('token')}`
                             }

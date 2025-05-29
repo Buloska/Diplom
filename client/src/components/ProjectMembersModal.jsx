@@ -6,10 +6,11 @@ const ProjectMembersModal = ({ projectId, onClose, userRole }) => {
   const [members, setMembers] = useState([]);
   const [email, setEmail] = useState('');
   const token = localStorage.getItem('token');
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchMembers = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/project-members/${projectId}`, {
+      const res = await axios.get(`${API_URL}/api/project-members/${projectId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMembers(res.data);
@@ -20,7 +21,7 @@ const ProjectMembersModal = ({ projectId, onClose, userRole }) => {
 
   const handleAdd = async () => {
     try {
-      await axios.post(`http://localhost:5000/api/project-members/${projectId}`, {
+      await axios.post(`${API_URL}/api/project-members/${projectId}`, {
         email
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -58,7 +59,7 @@ const ProjectMembersModal = ({ projectId, onClose, userRole }) => {
                     value={m.role}
                     onChange={async (e) => {
                       try {
-                        await axios.put(`http://localhost:5000/api/project-members/${projectId}/${m.user.id}`, {
+                        await axios.put(`${API_URL}/api/project-members/${projectId}/${m.user.id}`, {
                           role: e.target.value
                         }, {
                           headers: { Authorization: `Bearer ${token}` }
@@ -77,7 +78,7 @@ const ProjectMembersModal = ({ projectId, onClose, userRole }) => {
                     className="delete-user-btn"
                     onClick={async () => {
                       try {
-                        await axios.delete(`http://localhost:5000/api/project-members/${projectId}/${m.user.id}`, {
+                        await axios.delete(`${API_URL}/api/project-members/${projectId}/${m.user.id}`, {
                           headers: { Authorization: `Bearer ${token}` }
                         });
                         fetchMembers();

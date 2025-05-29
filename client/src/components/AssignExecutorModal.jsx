@@ -5,38 +5,39 @@ const AssignExecutorModal = ({ projectId, taskId, onClose, onAssigned }) => {
   const [users, setUsers] = useState([]);
   const [selectedId, setSelectedId] = useState('');
   const token = localStorage.getItem('token');
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/project-members/${projectId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        setUsers(data);
-      } catch (err) {
-        console.error('Ошибка загрузки участников:', err);
-      }
-    };
-    fetchUsers();
-  }, [projectId, token]);
-
-  const handleAssign = async () => {
+  const API_URL = process.env.REACT_APP_API_URL;
+  
+useEffect(() => {
+  const fetchUsers = async () => {
     try {
-      await fetch(`http://localhost:5000/api/tasks/${taskId}/assign`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ executorId: selectedId })
+      const res = await fetch(`${API_URL}/api/project-members/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      onAssigned();
-      onClose();
+      const data = await res.json();
+      setUsers(data);
     } catch (err) {
-      console.error('Ошибка назначения исполнителя:', err);
+      console.error('Ошибка загрузки участников:', err);
     }
   };
+  fetchUsers();
+}, [projectId, token]);
+
+const handleAssign = async () => {
+  try {
+    await fetch(`${API_URL}/api/tasks/${taskId}/assign`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ executorId: selectedId })
+    });
+    onAssigned();
+    onClose();
+  } catch (err) {
+    console.error('Ошибка назначения исполнителя:', err);
+  }
+};
 
   return (
     <div className="modal-backdrop">

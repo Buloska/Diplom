@@ -6,6 +6,7 @@ const ProjectsList = () => {
   const [projects, setProjects] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newProject, setNewProject] = useState({ name: '', description: '' });
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const token = localStorage.getItem('token');
 
@@ -13,7 +14,7 @@ const ProjectsList = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/projects', {
+        const response = await axios.get(`${API_URL}/api/projects`,  {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -28,8 +29,7 @@ const ProjectsList = () => {
 
   const handleCreate = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/projects',
+      const response = await axios.post(`${API_URL}/api/projects`,
         newProject,
         {
           headers: {
