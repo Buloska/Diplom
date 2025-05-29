@@ -34,21 +34,24 @@ const CalendarView = ({ tasks = [], onDayClick, onRightClick, onTaskDeleted }) =
   };
 
   const getTasksForDate = (day) => {
-    const dateStr = new Date(currentYear, currentMonth, day).toISOString().slice(0, 10);
+    const dateStr = new Date(currentYear, currentMonth, day)
+  .toLocaleDateString('sv-SE');
     return tasks.filter(task => task.dueDate?.startsWith(dateStr));
   };
 
   const handleClick = (day) => {
-    const dateStr = new Date(currentYear, currentMonth, day).toISOString().slice(0, 10);
-    onDayClick(dateStr);
-  };
+  const dateStr = new Date(currentYear, currentMonth, day)
+    .toLocaleDateString('sv-SE');
+  onDayClick(dateStr);
+};
 
   const handleRightClick = (e, day) => {
-    e.preventDefault();
-    const dateStr = new Date(currentYear, currentMonth, day).toISOString().slice(0, 10);
-    setContextMenuDay(dateStr);
-    setShowContextMenu(true);
-  };
+  e.preventDefault();
+  const dateStr = new Date(currentYear, currentMonth, day)
+    .toLocaleDateString('sv-SE');
+  setContextMenuDay(dateStr);
+  setShowContextMenu(true);
+};
 
   const monthNames = [
     'Январь', 'Февраль', 'Март', 'Апрель',
