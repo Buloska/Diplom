@@ -1,0 +1,63 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-window {
+  background: white;
+  border-radius: 10px;
+  padding: 20px 30px;
+  min-width: 320px;
+  max-width: 90%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-window h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.modal-window select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.modal-actions button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2196f3;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.modal-actions .cancel-btn {
+  background-color: #f44336;
+}
+
+.modal-actions button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

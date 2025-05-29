@@ -1,0 +1,97 @@
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.calendar-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: #fff;
+  border-radius: 8px;
+  min-height: 100px;
+  padding: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  overflow: hidden;
+}
+
+
+.calendar-cell:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.03);
+}
+
+
+.day-number {
+  font-weight: bold;
+}
+
+.task-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #007bff;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+.has-tasks {
+  border: 2px solid #007bff;
+}
+
+.calendar-task {
+  background-color: #f1f1f1;
+  margin-top: 4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.date-number {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.day-task-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.day-task-modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.modal-task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.modal-task-item button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 16px;
+}

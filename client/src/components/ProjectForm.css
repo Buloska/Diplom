@@ -1,0 +1,52 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-window {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 16px rgba(0,0,0,0.25);
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-form input,
+.project-form textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.form-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #1c87c9;
+  color: white;
+}
+
+.form-buttons button[type='button'] {
+  background-color: #999;
+}
