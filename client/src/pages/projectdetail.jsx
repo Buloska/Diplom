@@ -263,7 +263,9 @@ setProjectTitle(res.data.title);
     fetchProject();
     setContextMenu(null);
   }, [fetchTasks, fetchRole, fetchProject]);
-
+useEffect(() => {
+  console.log('📦 tasks:', tasks);
+}, [tasks]);
   const handleAddSubtask = async (taskId) => {
     console.log('Добавление подзадачи к задаче ID:', taskId);
     try {
@@ -327,6 +329,7 @@ const handleRenameSubtask = async (subtaskId, newTitle) => {
   const handleToggleSubtask = async (taskId, subtaskIndex) => {
     try {
       const subtask = tasks.find(t => t.id === taskId).subtasks[subtaskIndex];
+      console.log('🔧 PUT:', subtaskId, typeof subtaskId);
       await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtask.id}`, {
         completed: !subtask.completed
       }, {
