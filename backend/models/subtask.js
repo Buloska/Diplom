@@ -18,10 +18,18 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE'
     },
     comment: {
-  type: DataTypes.TEXT,
-  allowNull: true
-}
+      type: DataTypes.TEXT,
+      allowNull: true
+    }
   });
+
+
+  Subtask.associate = (models) => {
+    Subtask.belongsTo(models.Task, {
+      foreignKey: 'taskId',
+      as: 'task'
+    });
+  };
 
   return Subtask;
 };
