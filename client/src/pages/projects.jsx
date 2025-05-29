@@ -57,7 +57,7 @@ const handleLogout = () => {
 };
   const fetchGlobalTasks = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/tasks', {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const global = res.data.filter(task => task.projectId === null);
