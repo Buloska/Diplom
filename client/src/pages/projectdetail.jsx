@@ -266,21 +266,30 @@ setProjectTitle(res.data.title);
 useEffect(() => {
   console.log('📦 tasks:', tasks);
 }, [tasks]);
-  const handleAddSubtask = async (taskId) => {
-    console.log('Добавление подзадачи к задаче ID:', taskId);
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/subtasks`, {
-        taskId,
-        title: 'Новая подзадача',
-        completed: false
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchTasks();
-    } catch (err) {
-      console.error("Ошибка при добавлении подзадачи:", err);
+  const handleRenameSubtask = async (subtaskId, newTitle) => {
+  try {
+    const foundTask = tasks.find(t => t.subtasks.some(st => st.id === subtaskId));
+    if (!foundTask) {
+      throw new Error('Не найдена задача, содержащая подзадачу');
     }
-  };
+
+    const foundSubtask = foundTask.subtasks.find(st => st.id === subtaskId);
+    if (!foundSubtask) {
+      throw new Error('Подзадача не найдена');
+    }
+
+    await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
+      title: newTitle,
+      completed: foundSubtask.completed ?? false
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    fetchTasks();
+  } catch (err) {
+    console.error("Ошибка при переименовании подзадачи:", err);
+  }
+};
 
   const handleRenameTask = async (taskId, newTitle) => {
   try {
