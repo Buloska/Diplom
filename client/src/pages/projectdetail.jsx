@@ -294,7 +294,6 @@ setProjectTitle(res.data.title);
 
 
   const handleRenameSubtask = async (taskId, subtaskIndex, newTitle) => {
-    console.log('RENAME → subtaskId:', subtask?.id, '| title:', newTitle, '| completed:', subtask?.completed);
 
   try {
     // Находим подзадачу внутри нужной задачи
@@ -304,6 +303,7 @@ setProjectTitle(res.data.title);
     if (!subtask) {
       throw new Error('Подзадача не найдена');
     }
+        console.log('RENAME → subtaskId:', subtask?.id, '| title:', newTitle, '| completed:', subtask?.completed);
 
     const subtaskId = subtask.id;
 
