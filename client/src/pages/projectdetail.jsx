@@ -190,11 +190,11 @@ const ProjectDetail = () => {
   
   const fetchProject = useCallback(async () => {
   try {
-    await axios.get(`${process.env.REACT_APP_API_URL}/api/projects/${projectId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-     console.log('Полученный проект:', res.data);
-    setProjectTitle(res.data.title);
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/projects/${projectId}`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+console.log('Полученный проект:', res.data);
+setProjectTitle(res.data.title);
   } catch (err) {
     console.error('Ошибка при получении названия проекта:', err);
   }
