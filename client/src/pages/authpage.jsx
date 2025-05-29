@@ -23,7 +23,8 @@ const AuthPage = () => {
             email: formData.email,
             password: formData.password
           };
-
+      console.log('📦 payload:', payload);
+      console.log('📍 URL:', url);
       const response = await axios.post(url, payload);
       console.log('📦 response.data:', response.data);
       const token = response.data.token;
