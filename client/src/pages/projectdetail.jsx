@@ -440,7 +440,7 @@ setProjectTitle(res.data.title);
         if (task.id === active.id) {
           const newX = (task.x || 0) + delta.x;
           const newY = (task.y || 0) + delta.y;
-          axios.put(`http://localhost:5000/api/tasks/${task.id}`, {
+          axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${task.id}`, {
             x: newX,
             y: newY
           }, {
