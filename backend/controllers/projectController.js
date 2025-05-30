@@ -108,7 +108,7 @@ const getProjectById = async (req, res) => {
       return res.status(404).json({ message: 'Проект не найден' });
     }
 
-    if (project.ownerId !== userId && project.project_members.length === 0) {
+    if (project.ownerId !== userId && (!Array.isArray(project.project_members) || project.project_members.length === 0)) {
       return res.status(403).json({ message: 'Нет доступа к проекту' });
     }
 
