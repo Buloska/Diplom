@@ -60,6 +60,7 @@ router.put(
       next();
     } catch (err) {
       console.error('Ошибка при поиске подзадачи или задачи:', err);
+      console.error(err.stack); // ⬅️ Очень желательно
       res.status(500).json({ error: 'Ошибка при проверке projectId' });
     }
   },
