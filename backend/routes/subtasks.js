@@ -50,9 +50,14 @@ router.put(
 }
       });
 
-      if (!subtask || !subtask.task) {
-        return res.status(404).json({ message: 'Подзадача или задача не найдена' });
-      }
+      if (!subtask) {
+  return res.status(404).json({ message: 'Подзадача не найдена' });
+}
+
+if (!subtask.task) {
+  console.log('⚠️ Не найдена связанная задача для подзадачи:', subtask.id);
+  return res.status(400).json({ message: 'Задача, к которой относится подзадача, не найдена' });
+}
 
       // Передаём projectId в body для checkProjectRole
       req.body.projectId = subtask.Task.projectId;
