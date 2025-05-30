@@ -3,7 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const checkProjectRole = require('../middleware/checkProjectRole');
 const { Subtask, Task } = require('../config/db');
-
+const { ProjectMember } = require('../config/db');
 // POST /subtasks — создание
 router.post(
   '/',
