@@ -60,7 +60,7 @@ if (!subtask.task) {
 }
 
       // Передаём projectId в body для checkProjectRole
-      req.body.projectId = subtask.Task.projectId;
+      req.body.projectId = subtask.task.projectId;
 
       next();
     } catch (err) {
