@@ -111,7 +111,7 @@ router.get('/task/:taskId', authMiddleware, checkProjectRole(['owner', 'manager'
         }
       ]
     });
-    console.log('🔍 subtask.task =', subtask?.task);
+    
 
     res.json(subtasks);
   } catch (err) {
