@@ -50,7 +50,7 @@ router.put(
 }
       });
 
-      if (!subtask || !subtask.Task) {
+      if (!subtask || !subtask.task) {
         return res.status(404).json({ message: 'Подзадача или задача не найдена' });
       }
 
