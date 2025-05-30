@@ -41,51 +41,50 @@ router.put(
   authMiddleware,
   async (req, res, next) => {
     try {
-      // Находим подзадачу и связанный Task
       const subtask = await Subtask.findByPk(req.params.id, {
-        include: {
-  model: Task,
-  as: 'task',
-  attributes: ['projectId']
-}
+        include: { model: Task, as: 'task', attributes: ['projectId'] }
       });
 
-      if (!subtask) {
-  return res.status(404).json({ message: 'Подзадача не найдена' });
-}
+      if (!subtask || !subtask.task) {
+        return res.status(404).json({ message: 'Подзадача или задача не найдена' });
+      }
 
-if (!subtask.task) {
-  console.log('⚠️ Не найдена связанная задача для подзадачи:', subtask.id);
-  return res.status(400).json({ message: 'Задача, к которой относится подзадача, не найдена' });
-}
-
-      // Передаём projectId в body для checkProjectRole
       req.body.projectId = subtask.task.projectId;
-
+      req.subtask = subtask; // передаём подзадачу дальше
       next();
     } catch (err) {
-      console.error('Ошибка при поиске подзадачи или задачи:', err);
-      console.error(err.stack); // ⬅️ Очень желательно
-      res.status(500).json({ error: 'Ошибка при проверке projectId' });
+      console.error('Ошибка при поиске подзадачи:', err);
+      res.status(500).json({ error: 'Ошибка при поиске подзадачи' });
     }
   },
-  checkProjectRole(['owner', 'manager']),
   async (req, res) => {
-    console.log('===> PUT /subtasks/:id — req.body:', req.body);
+    const { title, completed } = req.body;
+    const { id: userId } = req.user;
+    const projectId = req.body.projectId;
 
     try {
+      // Ищем роль пользователя в проекте
+      const membership = await ProjectMember.findOne({
+        where: { userId, projectId }
+      });
+
+      const role = membership?.role;
+
+      // Участник может только отмечать выполнение
+      const isOnlyCompletedChange =
+        typeof completed !== 'undefined' &&
+        typeof title === 'undefined';
+
+      if (
+        !membership ||
+        (role === 'member' && !isOnlyCompletedChange)
+      ) {
+        return res.status(403).json({ message: 'Недостаточно прав для изменения подзадачи' });
+      }
+
       const updates = {};
-      if (typeof req.body.title !== 'undefined') {
-        updates.title = req.body.title;
-      }
-
-      if (typeof req.body.completed !== 'undefined') {
-        updates.completed = req.body.completed;
-      }
-
-      if (Object.keys(updates).length === 0) {
-        return res.status(400).json({ message: 'Нет данных для обновления' });
-      }
+      if (typeof title !== 'undefined') updates.title = title;
+      if (typeof completed !== 'undefined') updates.completed = completed;
 
       const [updated] = await Subtask.update(updates, {
         where: { id: req.params.id }
@@ -102,6 +101,7 @@ if (!subtask.task) {
     }
   }
 );
+
 
 // GET /subtasks/task/:taskId — получение
 router.get('/task/:taskId', authMiddleware, checkProjectRole(['owner', 'manager', 'member']), async (req, res) => {
