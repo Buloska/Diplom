@@ -60,5 +60,10 @@ executorId: {
 
 
 });
-
+Task.associate = (models) => {
+  Task.hasMany(models.Subtask, {
+    foreignKey: 'taskId',
+    as: 'subtasks'
+  });
+};
 module.exports = Task;
