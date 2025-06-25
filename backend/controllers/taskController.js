@@ -186,24 +186,12 @@ const getTasksByProject = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const project = await Project.findOne({
-      where: {
-        id: projectId,
-        [Op.or]: [
-          { ownerId: userId },
-          { '$members.userId$': userId }
-        ]
-      },
-      include: [
-        {
-          model: ProjectMember,
-          as: 'members',
-          required: false
-        }
-      ]
+    // Проверяем, состоит ли пользователь в проекте
+    const membership = await ProjectMember.findOne({
+      where: { userId, projectId }
     });
 
-    if (!project) {
+    if (!membership) {
       return res.status(403).json({ message: 'Нет доступа к задачам этого проекта' });
     }
 
@@ -221,14 +209,9 @@ const getTasksByProject = async (req, res) => {
     res.json(tasks);
   } catch (err) {
     console.error('Ошибка при получении задач по проекту:', err);
-    res.status(500).json({
-      message: 'Ошибка сервера',
-      error: err.message,
-      stack: err.stack
-    });
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
-
 
 const addComment = async (req, res) => {
   try {
