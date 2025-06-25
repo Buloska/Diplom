@@ -1,8 +1,17 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('название_бд', 'логин', 'пароль', {
-  host: 'localhost',
-  dialect: 'mysql', // Или 'postgres', если у тебя Postgres
-});
+const dotenv = require('dotenv');
+dotenv.config();
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    dialect: 'mysql',
+    logging: false,
+  }
+);
 
 // Импорт моделей как функций
 const User = require('../models/user')(sequelize, DataTypes);
@@ -37,7 +46,6 @@ ProjectMember.belongsTo(Project, { foreignKey: 'projectId' });
 User.hasMany(ProjectMember, { foreignKey: 'userId', onDelete: 'CASCADE' });
 ProjectMember.belongsTo(User, { foreignKey: 'userId' });
 
-// Экспорт всех моделей и sequelize
 module.exports = {
   sequelize,
   Sequelize,
