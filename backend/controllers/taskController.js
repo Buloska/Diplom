@@ -186,7 +186,7 @@ const getTasksByProject = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Проверяем, состоит ли пользователь в проекте
+    // Проверка, что пользователь участник проекта
     const membership = await ProjectMember.findOne({
       where: { userId, projectId }
     });
@@ -202,6 +202,10 @@ const getTasksByProject = async (req, res) => {
           model: User,
           as: 'executor',
           attributes: ['id', 'fullName', 'email']
+        },
+        {
+          model: Subtask,
+          as: 'subtasks'  // Вот главное!
         }
       ]
     });
