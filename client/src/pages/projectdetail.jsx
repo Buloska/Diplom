@@ -46,8 +46,6 @@ const ContextMenu = ({ x, y, options, onClose }) => {
   );
 };
 const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameSubtask }) => {
-  // 🔒 Защита от повреждённых задач
-  
   const {
     attributes,
     listeners,
@@ -65,10 +63,15 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
     console.warn('⛔ Пропуск задачи с некорректными данными:', task);
     return null;
   }
+
+  const allSubtasksCompleted = Array.isArray(task.subtasks) &&
+    task.subtasks.length > 0 &&
+    task.subtasks.every(st => st.completed);
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    border: task.subtasks?.length > 0 && task.subtasks.every(st => st.completed) ? '2px solid green' : 'none',
+    border: allSubtasksCompleted ? '2px solid green' : 'none',
     position: 'absolute',
     left: task.x || 0,
     top: task.y || 0,
@@ -123,13 +126,13 @@ const SortableTask = ({ task, onAddSubtask, onToggleSubtask, onRename, onRenameS
         )}
 
         <ul className="subtasks-list">
-          {task.subtasks?.map((subtask) => (
+          {Array.isArray(task.subtasks) && task.subtasks.map((subtask) => (
             <li
-  key={subtask.id}
-  className={`subtask-item ${subtask.completed ? 'completed' : ''}`}
-  data-id={subtask.id}                      // ID подзадачи
-  data-task-id={task.id}                   // (опционально, если пригодится для меню)
->
+              key={subtask.id}
+              className={`subtask-item ${subtask.completed ? 'completed' : ''}`}
+              data-id={subtask.id}
+              data-task-id={task.id}
+            >
               <span
                 className={`checkbox ${subtask.completed ? 'checked' : ''}`}
                 onClick={(e) => {
