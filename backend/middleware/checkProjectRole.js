@@ -85,7 +85,7 @@ module.exports = (allowedRoles) => {
         return res.status(403).json({ message: 'Вы не участник проекта' });
       }
 
-      if (!allowedRoles.includes(membership.role)) {
+      if (allowedRoles.length && !allowedRoles.includes(membership.role)) {
         console.log(`❌ Недостаточно прав (роль: ${membership.role}, нужно: ${allowedRoles.join(', ')})`);
         return res.status(403).json({ message: 'Недостаточно прав' });
       }
