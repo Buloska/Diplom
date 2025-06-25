@@ -1,5 +1,5 @@
-const ProjectMember = require('../models/projectMember');
-const User = require('../models/user');
+const { ProjectMember } = require('../config/db');
+const { User } = require('../config/db');
 
 const addMember = async (req, res) => {
   const { projectId } = req.params;
