@@ -3,7 +3,7 @@ const { ProjectMember, Task, Subtask } = require('../config/db');
 module.exports = (allowedRoles) => {
   return async (req, res, next) => {
     const userId = req.user.id;
-    let projectId = req.params.projectId || req.body?.projectId;
+    let projectId = req.params.projectId || req.body?.projectId || req.params.id;
 
     try {
       // 📌 Если projectId нет — пытаемся определить его по taskId (при :id в URL)
