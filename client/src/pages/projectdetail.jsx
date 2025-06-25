@@ -219,11 +219,11 @@ setProjectTitle(res.data.title);
         headers: { Authorization: `Bearer ${token}` },
       });
       const tasksWithSubtasks = await Promise.all(res.data.map(async (t) => {
-        const subtasksRes = await axios.get(`${process.env.REACT_APP_API_URL}/subtasks/task/${t.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        return { ...t, subtasks: subtasksRes.data };
-      }));
+  const subtasksRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/subtasks/task/${t.id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return { ...t, subtasks: subtasksRes.data };
+}));
       setTasks(tasksWithSubtasks);
     } catch (err) {
       console.error('Ошибка при загрузке задач:', err);
@@ -301,11 +301,12 @@ useEffect(() => {
 
   const handleRenameTask = async (taskId, newTitle) => {
   try {
-    await axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${taskId}`, {
-      title: newTitle
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtaskId}`, {
+  title: newTitle,
+  completed: subtask.completed ?? false
+}, {
+  headers: { Authorization: `Bearer ${token}` }
+});
     fetchTasks();
   } catch (err) {
     console.error("Ошибка при переименовании задачи:", err);
@@ -320,11 +321,11 @@ useEffect(() => {
     try {
       const subtask = tasks.find(t => t.id === taskId).subtasks[subtaskIndex];
       console.log('PUT:', subtask.id, typeof subtask.id);;
-      await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtask.id}`, {
-        completed: !subtask.completed
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtask.id}`, {
+  completed: !subtask.completed
+}, {
+  headers: { Authorization: `Bearer ${token}` }
+});
       fetchTasks();
     } catch (err) {
       console.error("Ошибка при переключении статуса подзадачи:", err);
@@ -364,9 +365,9 @@ const handleContextMenu = (e) => {
         label: 'Удалить подзадачу',
         onClick: async () => {
           try {
-            await axios.delete(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtaskId}`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
             fetchTasks();
             setContextMenu(null);
           } catch (err) {
@@ -447,13 +448,13 @@ const handleContextMenu = (e) => {
 
   const handleAddSubtask = async (taskId) => {
   try {
-    await axios.post(`${process.env.REACT_APP_API_URL}/subtasks`, {
-      taskId,
-      title: 'Новая подзадача',
-      completed: false
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await axios.post(`${process.env.REACT_APP_API_URL}/api/subtasks`, {
+  taskId,
+  title: 'Новая подзадача',
+  completed: false
+}, {
+  headers: { Authorization: `Bearer ${token}` }
+});
     fetchTasks();
   } catch (err) {
     console.error("Ошибка при добавлении подзадачи:", err);
@@ -503,11 +504,11 @@ const handleContextMenu = (e) => {
         .subtasks[commentTarget.subtaskIndex].id;
 
       try {
-        await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}/comment`, {
-          comment: newComment
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtaskId}/comment`, {
+  comment: newComment
+}, {
+  headers: { Authorization: `Bearer ${token}` }
+});
         fetchTasks();
       } catch (err) {
         console.error("Ошибка при сохранении комментария:", err);
