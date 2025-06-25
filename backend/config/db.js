@@ -1,15 +1,21 @@
-const sequelize = require('./sequelize');
-const User = require('../models/user');
-const Task = require('../models/task');
-const Label = require('../models/label');
-const TaskLabel = require('../models/taskLabel');
-const Project = require('../models/project');
-const Comment = require('../models/comment');
-const Notification = require('../models/notification');
-const ProjectMember = require('../models/projectMember');
-const subtaskModel = require('../models/subtask');  
-const Subtask = subtaskModel(sequelize, require('sequelize').DataTypes);
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('название_бд', 'логин', 'пароль', {
+  host: 'localhost',
+  dialect: 'mysql', // Или 'postgres', если у тебя Postgres
+});
 
+// Импорт моделей как функций
+const User = require('../models/user')(sequelize, DataTypes);
+const Task = require('../models/task')(sequelize, DataTypes);
+const Label = require('../models/label')(sequelize, DataTypes);
+const TaskLabel = require('../models/taskLabel')(sequelize, DataTypes);
+const Project = require('../models/project')(sequelize, DataTypes);
+const Comment = require('../models/comment')(sequelize, DataTypes);
+const Notification = require('../models/notification')(sequelize, DataTypes);
+const ProjectMember = require('../models/projectMember')(sequelize, DataTypes);
+const Subtask = require('../models/subtask')(sequelize, DataTypes);
+
+// Ассоциации:
 User.hasMany(Task, { foreignKey: 'userId' });
 Task.belongsTo(User, { foreignKey: 'userId' });
 
@@ -22,43 +28,26 @@ Task.belongsTo(Project, { foreignKey: 'projectId' });
 Task.belongsToMany(Label, { through: TaskLabel, foreignKey: 'taskId' });
 Label.belongsToMany(Task, { through: TaskLabel, foreignKey: 'labelId' });
 
-User.hasMany(Comment, { foreignKey: 'userId' });
-Task.hasMany(Comment, { foreignKey: 'taskId' });
-Comment.belongsTo(Task, { foreignKey: 'taskId' })
-Comment.belongsTo(User, { foreignKey: 'userId' })
+Task.hasMany(Subtask, { foreignKey: 'taskId', onDelete: 'CASCADE' });
+Subtask.belongsTo(Task, { foreignKey: 'taskId' });
 
-User.hasMany(Notification, { foreignKey: 'userId' });
-Notification.belongsTo(User, { foreignKey: 'userId' });
+Project.hasMany(ProjectMember, { foreignKey: 'projectId', onDelete: 'CASCADE' });
+ProjectMember.belongsTo(Project, { foreignKey: 'projectId' });
 
-Project.hasMany(ProjectMember, { as: 'members' });
-ProjectMember.belongsTo(Project);
+User.hasMany(ProjectMember, { foreignKey: 'userId', onDelete: 'CASCADE' });
+ProjectMember.belongsTo(User, { foreignKey: 'userId' });
 
-User.hasMany(ProjectMember);
-ProjectMember.belongsTo(User);
-
-User.belongsToMany(Project, { through: ProjectMember, foreignKey: 'userId' });
-Project.belongsToMany(User, { through: ProjectMember, foreignKey: 'projectId' });
-
-Task.belongsTo(User, { foreignKey: 'executorId', as: 'executor' });
-
-Task.hasMany(Subtask, {
-  foreignKey: 'taskId',
-  onDelete: 'CASCADE'
-});
-Subtask.belongsTo(Task, {
-  foreignKey: 'taskId',
-  as: 'task'
-});
-
-
+// Экспорт всех моделей и sequelize
 module.exports = {
   sequelize,
+  Sequelize,
   User,
   Task,
+  Label,
+  TaskLabel,
   Project,
   Comment,
   Notification,
   ProjectMember,
-  Subtask 
+  Subtask,
 };
-
