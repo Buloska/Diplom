@@ -15,6 +15,7 @@ const { Task } = require('../config/db');
 
 router.get('/', authMiddleware, getTasks);
 router.get('/:id', authMiddleware, getTaskById);
+router.get('/project/:projectId', authMiddleware, checkProjectRole(['owner', 'manager', 'member']), getTasksByProject);
 
 // Только owner и manager могут создавать/редактировать задачи
 router.post(

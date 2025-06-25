@@ -17,6 +17,7 @@ router.post('/:projectId', addMember);
 router.delete('/:projectId/:userId', removeMember);
 router.put('/:projectId/:userId', updateMemberRole);
 router.get('/:projectId', getProjectMembers);
+router.get('/:projectId/members', authMiddleware, checkProjectRole(['owner', 'manager', 'member']), getProjectMembers);
 
 router.post('/:projectId', checkProjectRole(['owner']), addMember);
 router.put('/:projectId/:userId', checkProjectRole(['owner']), updateMemberRole);
