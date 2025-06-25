@@ -3,7 +3,7 @@ const Label = require('../models/label');
 const { Notification } = require('../config/db');
 const { Op } = require('sequelize');
 const { User } = require('../config/db');
-const Subtask = require('../models/subtask');
+const { Subtask } = require('../config/db');
 
 
 const updateTask = async (req, res) => {
