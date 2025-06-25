@@ -1,16 +1,16 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize');
 
-const Label = sequelize.define('Label', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  color: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: '#cccccc'
-  }
-});
+const { Model } = require('sequelize');
 
-module.exports = Label;
+module.exports = (sequelize, DataTypes) => {
+  class Label extends Model {}
+
+  Label.init({
+    name: { type: DataTypes.STRING, allowNull: false },
+    color: { type: DataTypes.STRING, allowNull: false, defaultValue: '#cccccc' }
+  }, {
+    sequelize,
+    modelName: 'Label'
+  });
+
+  return Label;
+};

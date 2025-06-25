@@ -1,15 +1,16 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize');
 
-const TaskLabel = sequelize.define('TaskLabel', {
-  taskId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  labelId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  }
-});
+const { Model } = require('sequelize');
 
-module.exports = TaskLabel;
+module.exports = (sequelize, DataTypes) => {
+  class TaskLabel extends Model {}
+
+  TaskLabel.init({
+    taskId: { type: DataTypes.INTEGER, allowNull: false },
+    labelId: { type: DataTypes.INTEGER, allowNull: false }
+  }, {
+    sequelize,
+    modelName: 'TaskLabel'
+  });
+
+  return TaskLabel;
+};
