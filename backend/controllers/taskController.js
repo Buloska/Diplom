@@ -48,6 +48,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   const taskId = req.params.id;
+  const userId = req.user.id;
 
   try {
     const task = await Task.findOne({ where: { id: taskId } });
@@ -56,8 +57,26 @@ const deleteTask = async (req, res) => {
       console.log('❌ Задача не найдена');
       return res.status(404).json({ message: 'Задача не найдена' });
     }
-    await task.destroy(); // здесь может быть ошибка
 
+    if (task.projectId) {
+      // ✅ Если задача внутри проекта — проверяем роль в проекте
+      const member = await ProjectMember.findOne({
+        where: { userId, projectId: task.projectId },
+      });
+
+      if (!member || !['owner', 'manager'].includes(member.role)) {
+        console.log('❌ Нет прав на удаление проектной задачи');
+        return res.status(403).json({ message: 'Нет прав на удаление этой задачи' });
+      }
+    } else {
+      // ✅ Если задача глобальная — может удалить только автор
+      if (task.userId !== userId) {
+        console.log('❌ Нет прав на удаление глобальной задачи');
+        return res.status(403).json({ message: 'Нет прав на удаление этой задачи' });
+      }
+    }
+
+    await task.destroy();
     console.log('✅ Удалена задача');
     res.json({ message: 'Задача успешно удалена' });
   } catch (err) {
@@ -67,6 +86,7 @@ const deleteTask = async (req, res) => {
   }
 };
 
+module.exports = { deleteTask };
 const getTasks = async (req, res) => {
     const userId = req.user.id;
     const { labelId, status, dueBefore, dueAfter, search } = req.query;

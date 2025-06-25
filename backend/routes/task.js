@@ -33,7 +33,7 @@ router.post(
 router.put('/:id', authMiddleware, checkProjectRole(['owner', 'manager']), updateTask);
 
 // Только owner и manager могут удалять
-router.delete('/:id', authMiddleware, checkProjectRole(['owner', 'manager']), deleteTask);
+router.delete('/:id', authMiddleware, deleteTask);
 
 // Задачи проекта — доступно всем участникам
 router.get('/project/:projectId', authMiddleware, getTasksByProject);
