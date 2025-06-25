@@ -39,7 +39,7 @@ Label.belongsToMany(Task, { through: TaskLabel, foreignKey: 'labelId' });
 
 Task.belongsTo(User, { foreignKey: 'executorId', as: 'executor' });
 
-Task.hasMany(Subtask, { foreignKey: 'taskId', onDelete: 'CASCADE' });
+Task.hasMany(Subtask, { foreignKey: 'taskId', onDelete: 'CASCADE', as: 'subtasks' });
 Subtask.belongsTo(Task, { foreignKey: 'taskId', as: 'task' });
 
 Project.hasMany(ProjectMember, { foreignKey: 'projectId', onDelete: 'CASCADE', as: 'members' });
