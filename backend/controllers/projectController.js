@@ -1,5 +1,5 @@
 const { Project } = require('../config/db');
-const ProjectMember = require('../models/projectMember');
+const { ProjectMember } = require('../config/db');
 
 const createProject = async (req, res) => {
   try {
