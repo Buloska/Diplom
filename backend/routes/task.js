@@ -11,7 +11,7 @@ const {
   deleteTask,
   getTasksByProject
 } = require('../controllers/taskController');
-const Task = require('../models/task');
+const { Task } = require('../models/task');
 
 
 router.get('/', authMiddleware, getTasks);
