@@ -1,6 +1,6 @@
 const { Task, Project, ProjectMember } = require('../config/db');
 const Label = require('../models/label');
-const Notification = require('../models/notification');
+const { Notification } = require('../config/db');
 const { Op } = require('sequelize');
 const { User } = require('../config/db');
 const Subtask = require('../models/subtask');
