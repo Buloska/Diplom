@@ -10,8 +10,7 @@ const notificationRoutes = require('./routes/notification');
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/task');
 const projectMemberRoutes = require('./routes/projectMember');
-const subtaskRoutes = require('./routes/subtasks');
-
+const subtaskRoutes = require('./routes/subtasks');  // ✅
 
 require('dotenv').config();
 console.log('✅ DB_USER:', process.env.DB_USER);
@@ -19,10 +18,9 @@ console.log('✅ DB_PASS:', process.env.DB_PASS);
 console.log('✅ DB_NAME:', process.env.DB_NAME);
 console.log('✅ DB_HOST:', process.env.DB_HOST);
 
-
-
 app.use(cors());
 app.use(express.json());
+
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/labels', labelRoutes);
@@ -30,10 +28,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/project-members', projectMemberRoutes);
-app.use('/subtasks', subtaskRoutes);
-
-
-
+app.use('/api/subtasks', subtaskRoutes);  // ✅
 
 sequelize.sync({ alter: true }).then(() => {
   console.log('✅ База данных синхронизирована');
@@ -43,4 +38,3 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch((err) => {
   console.error('❌ Ошибка при синхронизации базы данных:', err);
 });
-
