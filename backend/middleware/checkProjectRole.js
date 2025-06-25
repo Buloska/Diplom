@@ -3,20 +3,20 @@ const { ProjectMember, Task, Subtask } = require('../config/db');
 module.exports = (allowedRoles) => {
   return async (req, res, next) => {
     const userId = req.user.id;
-    let projectId = req.params.projectId || req.body?.projectId || req.params.id;
+    let projectId = req.params.projectId || req.body?.projectId;
 
     try {
-      // 📌 Если projectId нет — пытаемся определить его по taskId (при :id в URL)
+      // 📌 Попытка определить projectId через taskId (если есть :id — например при PUT /tasks/:id)
       if (!projectId && req.params?.id) {
         const task = await Task.findByPk(req.params.id);
 
         if (task) {
-          console.log('📌 TASK USER ID:', task.userId);
+          console.log('📌 Найдена задача ID:', task.id, 'projectId:', task.projectId);
 
-          // 🔐 Если глобальная задача (без projectId)
-          if (!task.projectId) {
+          // ✅ Если задача глобальная (projectId == null)
+          if (task.projectId === null) {
             if (task.userId === userId) {
-              console.log('✅ Пользователь — автор глобальной задачи, доступ разрешён');
+              console.log('✅ Пользователь автор глобальной задачи, доступ разрешён');
               return next();
             } else {
               console.log('❌ Нет прав на глобальную задачу');
@@ -28,19 +28,19 @@ module.exports = (allowedRoles) => {
         }
       }
 
-      // 📌 Если taskId в теле (например, при создании подзадачи)
+      // 📌 Если projectId определяется через taskId в теле (например, при создании подзадачи)
       if (!projectId && req.body?.taskId) {
         const task = await Task.findByPk(req.body.taskId);
         if (task) projectId = task.projectId;
       }
 
-      // 📌 Если taskId в параметрах (например GET /subtasks/task/:taskId)
+      // 📌 Если :taskId в URL (например GET /subtasks/task/:taskId)
       if (!projectId && req.params?.taskId) {
         const task = await Task.findByPk(req.params.taskId);
         if (task) projectId = task.projectId;
       }
 
-      // 📌 Если :id — это subtaskId
+      // 📌 Если :id — это subtaskId (например PUT /subtasks/:id)
       if (!projectId && req.params?.id) {
         const subtask = await Subtask.findByPk(req.params.id, {
           include: { model: Task, as: 'task' }
@@ -49,7 +49,7 @@ module.exports = (allowedRoles) => {
         if (subtask?.task?.projectId) {
           projectId = subtask.task.projectId;
         } else if (subtask?.task && !subtask.task.projectId) {
-          // 🔐 Если подзадача вне проекта — доступ только автору
+          // ✅ Если подзадача глобальной задачи
           if (subtask.task.userId === userId) {
             console.log('✅ Автор подзадачи вне проекта, доступ разрешён');
             return next();
@@ -60,7 +60,7 @@ module.exports = (allowedRoles) => {
         }
       }
 
-      // 📌 Если всё ещё нет projectId — проверяем ещё раз глобальную задачу
+      // 📌 Если всё ещё нет projectId — проверяем глобальную задачу ещё раз
       if (!projectId && req.params?.id) {
         const task = await Task.findByPk(req.params.id);
         if (task && task.projectId === null && task.userId === userId) {
@@ -69,13 +69,13 @@ module.exports = (allowedRoles) => {
         }
       }
 
-      // 📌 Если всё ещё нет projectId — ошибка
+      // 📌 Если projectId так и не определён
       if (!projectId) {
         console.log('❌ Не удалось определить projectId');
         return res.status(400).json({ message: 'Не удалось определить projectId' });
       }
 
-      // 📌 Проверка роли участника проекта
+      // 📌 Проверка участника проекта
       const membership = await ProjectMember.findOne({
         where: { userId, projectId }
       });
@@ -85,17 +85,18 @@ module.exports = (allowedRoles) => {
         return res.status(403).json({ message: 'Вы не участник проекта' });
       }
 
-      if (allowedRoles.length && !allowedRoles.includes(membership.role)) {
+      console.log('✅ Роль пользователя:', membership.role);
+
+      if (!allowedRoles.includes(membership.role)) {
         console.log(`❌ Недостаточно прав (роль: ${membership.role}, нужно: ${allowedRoles.join(', ')})`);
         return res.status(403).json({ message: 'Недостаточно прав' });
       }
 
-      console.log('✅ Проверка пройдена. Роль пользователя:', membership.role);
-      req.projectRole = membership.role;
+      console.log('✅ Проверка пройдена');
       next();
     } catch (err) {
       console.error('❌ Ошибка в checkProjectRole:', err);
-      res.status(500).json({ message: 'Ошибка при проверке прав доступа', error: err.message });
+      res.status(500).json({ message: 'Ошибка проверки доступа', error: err.message });
     }
   };
 };
