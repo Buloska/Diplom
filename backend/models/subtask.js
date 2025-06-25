@@ -23,11 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-
   Subtask.associate = (models) => {
     Subtask.belongsTo(models.Task, {
       foreignKey: 'taskId',
-      as: 'task'
+      as: 'parentTask'  
     });
   };
 
