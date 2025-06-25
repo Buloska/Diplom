@@ -285,7 +285,7 @@ useEffect(() => {
       completed: subtask.completed
     });
 
-    await axios.put(`${process.env.REACT_APP_API_URL}/subtasks/${subtaskId}`, {
+    await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtaskId}`, {
       title: newTitle,
       completed: subtask.completed ?? false
     }, {
@@ -299,14 +299,13 @@ useEffect(() => {
 };
 
 
-  const handleRenameTask = async (taskId, newTitle) => {
+ const handleRenameTask = async (taskId, newTitle) => {
   try {
-    await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtaskId}`, {
-  title: newTitle,
-  completed: subtask.completed ?? false
-}, {
-  headers: { Authorization: `Bearer ${token}` }
-});
+    await axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${taskId}`, {
+      title: newTitle
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     fetchTasks();
   } catch (err) {
     console.error("Ошибка при переименовании задачи:", err);
@@ -316,21 +315,20 @@ useEffect(() => {
 
 
 
-
-  const handleToggleSubtask = async (taskId, subtaskIndex) => {
-    try {
-      const subtask = tasks.find(t => t.id === taskId).subtasks[subtaskIndex];
-      console.log('PUT:', subtask.id, typeof subtask.id);;
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtask.id}`, {
-  completed: !subtask.completed
-}, {
-  headers: { Authorization: `Bearer ${token}` }
-});
-      fetchTasks();
-    } catch (err) {
-      console.error("Ошибка при переключении статуса подзадачи:", err);
-    }
-  };
+const handleToggleSubtask = async (taskId, subtaskIndex) => {
+  try {
+    const subtask = tasks.find(t => t.id === taskId).subtasks[subtaskIndex];
+    console.log('PUT:', subtask.id, typeof subtask.id);
+    await axios.put(`${process.env.REACT_APP_API_URL}/api/subtasks/${subtask.id}`, {
+      completed: !subtask.completed
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchTasks();
+  } catch (err) {
+    console.error("Ошибка при переключении статуса подзадачи:", err);
+  }
+};
 
 const handleContextMenu = (e) => {
   if (userRole === 'member') return; // 🔒 блокируем для участника
@@ -446,40 +444,39 @@ const handleContextMenu = (e) => {
 
   const handleCloseContextMenu = () => setContextMenu(null);
 
-  const handleAddSubtask = async (taskId) => {
+const handleAddSubtask = async (taskId) => {
   try {
     await axios.post(`${process.env.REACT_APP_API_URL}/api/subtasks`, {
-  taskId,
-  title: 'Новая подзадача',
-  completed: false
-}, {
-  headers: { Authorization: `Bearer ${token}` }
-});
+      taskId,
+      title: 'Новая подзадача',
+      completed: false
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     fetchTasks();
   } catch (err) {
     console.error("Ошибка при добавлении подзадачи:", err);
   }
 };
-
-  const handleDragEnd = (event) => {
-    const { active, delta } = event;
-    setTasks((prev) => {
-      return prev.map((task) => {
-        if (task.id === active.id) {
-          const newX = (task.x || 0) + delta.x;
-          const newY = (task.y || 0) + delta.y;
-          axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${task.id}`, {
-            x: newX,
-            y: newY
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          }).catch(err => console.error('Ошибка обновления координат', err));
-          return { ...task, x: newX, y: newY };
-        }
-        return task;
-      });
+const handleDragEnd = (event) => {
+  const { active, delta } = event;
+  setTasks((prev) => {
+    return prev.map((task) => {
+      if (task.id === active.id) {
+        const newX = (task.x || 0) + delta.x;
+        const newY = (task.y || 0) + delta.y;
+        axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/${task.id}`, {
+          x: newX,
+          y: newY
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(err => console.error('Ошибка обновления координат', err));
+        return { ...task, x: newX, y: newY };
+      }
+      return task;
     });
-  };
+  });
+};
 
   if (loading) {
     return <p style={{ padding: '20px', fontSize: '18px' }}>Загрузка задач...</p>;
