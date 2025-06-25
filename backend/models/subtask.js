@@ -1,34 +1,28 @@
-module.exports = (sequelize, DataTypes) => {
-  const Subtask = sequelize.define('Subtask', {
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    completed: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    taskId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Tasks',
-        key: 'id'
-      },
-      onDelete: 'CASCADE'
-    },
-    comment: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    }
-  });
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/sequelize');  // Путь к твоему экземпляру Sequelize
 
-  Subtask.associate = (models) => {
-    Subtask.belongsTo(models.Task, {
-      foreignKey: 'taskId',
-      as: 'parentTask'  
-    });
-  };
+const Subtask = sequelize.define('Subtask', {
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  completed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  taskId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Tasks',
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  }
+});
 
-  return Subtask;
-};
+module.exports = Subtask;
