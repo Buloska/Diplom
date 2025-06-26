@@ -1,6 +1,6 @@
-const { ProjectMember } = require('../config/db');
-const { User } = require('../config/db');
+const { ProjectMember, User } = require('../config/db');
 
+// Добавление участника
 const addMember = async (req, res) => {
   const { projectId } = req.params;
   const { email } = req.body;
@@ -32,11 +32,14 @@ const addMember = async (req, res) => {
   }
 };
 
+// Удаление участника
 const removeMember = async (req, res) => {
   const { projectId, userId } = req.params;
 
   try {
-    const deleted = await ProjectMember.destroy({ where: { projectId, userId } });
+    const deleted = await ProjectMember.destroy({
+      where: { projectId, userId }
+    });
 
     if (!deleted) {
       return res.status(404).json({ message: 'Участник не найден' });
@@ -49,12 +52,15 @@ const removeMember = async (req, res) => {
   }
 };
 
+// Обновление роли
 const updateMemberRole = async (req, res) => {
   const { projectId, userId } = req.params;
   const { role } = req.body;
 
   try {
-    const member = await ProjectMember.findOne({ where: { projectId, userId } });
+    const member = await ProjectMember.findOne({
+      where: { projectId, userId }
+    });
 
     if (!member) {
       return res.status(404).json({ message: 'Участник не найден' });
@@ -70,13 +76,17 @@ const updateMemberRole = async (req, res) => {
   }
 };
 
+// Получение участников проекта
 const getProjectMembers = async (req, res) => {
   const { projectId } = req.params;
 
   try {
     const members = await ProjectMember.findAll({
       where: { projectId },
-      include: [{ model: User, attributes: ['id', 'fullName', 'email'] }]
+      include: [{
+        model: User,
+        attributes: ['id', 'fullName', 'email']  // <-- ВАЖНО! Это даёт имя и email
+      }]
     });
 
     res.json(members);
