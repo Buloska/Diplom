@@ -82,13 +82,13 @@ const getProjectMembers = async (req, res) => {
 
   try {
     const members = await ProjectMember.findAll({
-      where: { projectId },
-      include: [{
-        model: User,
-        attributes: ['id', 'fullName', 'email']  // <-- ВАЖНО! Это даёт имя и email
-      }]
-    });
-
+  where: { projectId },
+  include: [{
+    model: User,
+    as: 'user',
+    attributes: ['id', 'fullName', 'email']
+  }]
+});
     res.json(members);
   } catch (err) {
     console.error('Ошибка при получении участников:', err);
