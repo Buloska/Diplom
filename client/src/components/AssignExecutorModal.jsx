@@ -46,10 +46,10 @@ const handleAssign = async () => {
         <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
           <option value="">Выберите участника</option>
           {users.map((u) => (
-            <option key={u.user.id} value={u.user.id}>
-              {u.user.fullName || u.user.email}
-            </option>
-          ))}
+  <option key={u.User.id} value={u.User.id}>
+    {u.User.fullName || u.User.email}
+  </option>
+))}
         </select>
         <div className="modal-actions">
           <button onClick={handleAssign} disabled={!selectedId}>Сохранить</button>
