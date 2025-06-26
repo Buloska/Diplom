@@ -46,7 +46,7 @@ Project.hasMany(ProjectMember, { foreignKey: 'projectId', onDelete: 'CASCADE', a
 ProjectMember.belongsTo(Project, { foreignKey: 'projectId' });
 
 User.hasMany(ProjectMember, { foreignKey: 'userId', onDelete: 'CASCADE' });
-ProjectMember.belongsTo(User, { foreignKey: 'userId' });
+ProjectMember.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 module.exports = {
   sequelize,
