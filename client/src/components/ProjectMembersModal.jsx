@@ -49,7 +49,7 @@ const ProjectMembersModal = ({ projectId, onClose, userRole }) => {
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
               <div className="member-info">
-                <div>{m.user?.fullName || 'Без имени'}</div>
+                <div>{m.user?.fullName || m.user?.email || 'Без имени'}</div>
                 <div style={{ fontSize: '0.85em', color: '#888' }}>{m.user?.email}</div>
               </div>
 
